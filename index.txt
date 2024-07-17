@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        <style>html {
+            line-height: 1;
+            -ms-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            background-color: lightblue;
+            padding: 10px;
+        }
+
+        form {
+            margin-top: 15px;
+        }
+
+        .section-container {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px solid black;
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+        }
+
+        .fatigueLog {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .fatigueLog label {
+            margin-right: 10px;
+        }
+
+        .fatigueLog input {
+            margin-right: 10px;
+            width: 80%;
+        }
+
+        .fatigueLog span {
+            width: 50px;
+            text-align: center;
+        }
+
+        .signatureContainer,
+        .signatureContainer2 {
+            border: 1px dashed #ccc;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            width: 300px;
+            height: 300px;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        canvas {
+            border: 1px solid #000;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        .signatureImg {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #000;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .signatureContainer img {
+            max-width: 275px;
+            height: auto;
+            width: 275px;
+            height: auto;
+        }
+
+        .signatureContainer2 img {
+            max-width: 275px;
+            height: auto;
+            width: 275px;
+            height: auto;
+        }
+
+        textarea {
+            min-height: 300px;
+            border: 1px solid black;
+        }
+
+        label {
+            font-size: 20px;
+            color: black;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .remove-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .appointment-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .appointment-section.active {
+            max-height: 600px;
+            overflow: auto;
+        }
+
+        .incident-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .incident-section.active {
+            max-height: 1500px;
+            overflow: auto;
+        }
+
+        fieldset {
+            border: 0;
+        }
+
+        .auto-resize {
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            resize: none;
+        }
+
+        .auto-resize-input {
+            width: auto;
+            min-width: 50px;
+            box-sizing: content-box;
+        }
+    </style>
+    <title>Shift Notes</title>
+</head>
+
+<body>
+    <header>
+        <h3>Shift Notes</h3>
+        <p>* Participant does not consent to share this document</p>
+    </header>
+    <div id="firstDiv">
+        <form id="shiftForm" method="POST" action="process_shift_details.php" enctype="multipart/form-data">
+            <table class="shift-details-table">
+                <tr>
+                    <td><label for="date" style="font-size: 24px;">Shift Date:</label></td><br>
+                    <td><input type="date" id="date" name="date" required></td><br>
+                </tr>
+
+
+
+                <tr>
+                    <td><label for="worker_status">Support Type</label>
+                        <select id="worker_status" name="worker_status" class="browser-default" required>
+                            <option value="">None</option>
+                            <option value="Individual Support Worker">Individual support worker 1</option>
+                            <option value="Individual Support Worker">Individual support worker 2</option>
+                            <option value="Individual Support Worker">No Individual support worker 2</option>
+                            <option value="Shared">Shared support worker 1</option>
+                            <option value="Shared">Shared support worker 2</option>
+                            <option value="Shared">No shared support worker 2</option>
+                            <option value="Parent Support Worker">Parent's support worker</option>
+                            <option value="Parent Support Worker">Parent's support worker 1</option>
+                            <option value="Parent Support Worker">Parent's support worker 2</option>
+                            <option value="Parent Support Worker">No parent's support worker 2</option>
+                        </select>
+                    </td>
+
+                    <td><label for="worker1">Support Worker Name:</label><br>
+                        <select id="worker1" name="worker1" class="browser-default" required>
+                            <option value="">None</option><br>
+                            <option value="">--Please choose a worker--</option>
+                            <option value="Andrea Fajardo">Andrea Fajardo</option>
+                            <option value="Angela Lee">Angela Lee</option>
+                            <option value="Angela Zefi">Angela Zefi</option>
+                            <option value="Anika Bartholomeusz">Anika Bartholomeusz</option>
+                            <option value="Benjamin (Ben) Roberts">Benjamin (Ben) Roberts</option>
+                            <option value="Bronte (Bunny) Pettman">Bronte (Bunny) Pettman</option>
+                            <option value="Chaynne Humphrys">Chaynne Humphrys</option>
+                            <option value="Chi Ha">Chi Ha</option>
+                            <option value="Courtney Millington">Courtney Millington</option>
+                            <option value="Dhara Patel">Dhara Patel</option>
+                            <option value="Dhruv Sabharwal">Dhruv Sabharwal</option>
+                            <option value="Fernando Arnibar">Fernando Arnibar</option>
+                            <option value="Gaumit Patel">Gaumit Patel</option>
+                            <option value="Harshkumar (Happy) Modi">Harshkumar (Happy) Modi</option>
+                            <option value="Japneet (Rosie) Kaur">Japneet (Rosie) Kaur</option>
+                            <option value="Jarryd Humphrys">Jarryd Humphrys</option>
+                            <option value="Joe Zhang">Joe Zhang</option>
+                            <option value="Jose Diaz Armijo">Jose Diaz Armijo</option>
+                            <option value="Joseph Espejo">Joseph Espejo</option>
+                            <option value="Julie Moore">Julie Moore</option>
+                            <option value="Kapil Lamichane">Kapil Lamichane</option>
+                            <option value="Margerite (Rita) Gjergji">Margerite (Rita) Gjergji</option>
+                            <option value="Marie (Maz) Andersen">Marie (Maz) Andersen</option>
+                            <option value="Meena Sapkota">Meena Sapkota</option>
+                            <option value="Muhammad Hamza">Muhammad Hamza</option>
+                            <option value="Otto Basson">Otto Basson</option>
+                            <option value="Parvinder Kaur">Parvinder Kaur</option>
+                            <option value="Pranvera Ymeraj">Pranvera Ymeraj</option>
+                            <option value="Robandeep (Roban) Singh">Robandeep (Roban) Singh</option>
+                            <option value="Rodrigo Tangol">Rodrigo Tangol</option>
+                            <option value="Sandy Tran">Sandy Tran</option>
+                            <option value="Victoria Horsfall">Victoria Horsfall</option>
+                            <option value="Zachary (Zac) Gawen">Zachary (Zac) Gawen</option>
+                        </select>
+                    </td>
+
+                    <td><label for="timeFrom1">Started At</label><br>
+                        <input type="time" id="timeFrom1" name="timeFrom1" required>
+                    </td><br>
+
+                    <td><label for="timeUntil1">Finished At</label><br>
+                        <input type="time" id="timeUntil1" name="timeUntil1" required><br>
+                    </td><br>
+                </tr>
+                <tr>
+                    <td><label for="worker_status2">Support Type</label>
+                        <select id="worker_status2" name="worker_status" class="browser-default">
+                            <option value="">None</option>
+                            <option value="Individual Support Worker">Individual support worker 1</option>
+                            <option value="Individual Support Worker">Individual support worker 2</option>
+                            <option value="Individual Support Worker">No Individual support worker 2</option>
+                            <option value="Shared">Shared support worker 1</option>
+                            <option value="Shared">Shared support worker 2</option>
+                            <option value="Shared">No shared support worker 2</option>
+                            <option value="Parent Support Worker">Parent's support worker</option>
+                            <option value="Parent Support Worker">Parent's support worker 1</option>
+                            <option value="Parent Support Worker">Parent's support worker 2</option>
+                            <option value="Parent Support Worker">No parent's support worker 2</option>
+                        </select>
+                    </td>
+                    <td><label for="worker2">Support Worker Name</label><br>
+                        <select id="worker2" name="worker2" class="browser-default">
+                            <option value="">None</option><br>
+                            <option value="">--Please choose a worker--</option>
+                            <option value="Andrea Fajardo">Andrea Fajardo</option>
+                            <option value="Angela Lee">Angela Lee</option>
+                            <option value="Angela Zefi">Angela Zefi</option>
+                            <option value="Anika Bartholomeusz">Anika Bartholomeusz</option>
+                            <option value="Benjamin (Ben) Roberts">Benjamin (Ben) Roberts</option>
+                            <option value="Bronte (Bunny) Pettman">Bronte (Bunny) Pettman</option>
+                            <option value="Chaynne Humphrys">Chaynne Humphrys</option>
+                            <option value="Chi Ha">Chi Ha</option>
+                            <option value="Courtney Millington">Courtney Millington</option>
+                            <option value="Dhara Patel">Dhara Patel</option>
+                            <option value="Dhruv Sabharwal">Dhruv Sabharwal</option>
+                            <option value="Fernando Arnibar">Fernando Arnibar</option>
+                            <option value="Gaumit Patel">Gaumit Patel</option>
+                            <option value="Harshkumar (Happy) Modi">Harshkumar (Happy) Modi</option>
+                            <option value="Japneet (Rosie) Kaur">Japneet (Rosie) Kaur</option>
+                            <option value="Jarryd Humphrys">Jarryd Humphrys</option>
+                            <option value="Joe Zhang">Joe Zhang</option>
+                            <option value="Jose Diaz Armijo">Jose Diaz Armijo</option>
+                            <option value="Joseph Espejo">Joseph Espejo</option>
+                            <option value="Julie Moore">Julie Moore</option>
+                            <option value="Kapil Lamichane">Kapil Lamichane</option>
+                            <option value="Margerite (Rita) Gjergji">Margerite (Rita) Gjergji</option>
+                            <option value="Marie (Maz) Andersen">Marie (Maz) Andersen</option>
+                            <option value="Meena Sapkota">Meena Sapkota</option>
+                            <option value="Muhammad Hamza">Muhammad Hamza</option>
+                            <option value="Otto Basson">Otto Basson</option>
+                            <option value="Parvinder Kaur">Parvinder Kaur</option>
+                            <option value="Pranvera Ymeraj">Pranvera Ymeraj</option>
+                            <option value="Robandeep (Roban) Singh">Robandeep (Roban) Singh</option>
+                            <option value="Rodrigo Tangol">Rodrigo Tangol</option>
+                            <option value="Sandy Tran">Sandy Tran</option>
+                            <option value="Victoria Horsfall">Victoria Horsfall</option>
+                            <option value="Zachary (Zac) Gawen">Zachary (Zac) Gawen</option>
+                        </select>
+                    </td>
+
+                    <td><label for="timeFrom2">Started At</label><br>
+                        <input type="time" id="timeFrom2" name="timeFrom2">
+                    </td><br>
+
+                    <td><label for="timeUntil2">Finished At</label><br>
+                        <input type="time" id="timeUntil2" name="timeUntil2"><br>
+                    </td><br>
+                </tr>
+                <h4>Participant Name</h4>
+                <br>
+                <select id="client" name="client" class="browser-default" required>
+                    <option value="">--Please choose a participant--</option>
+                    <option value="James Narula">James Narula</option>
+                    <option value="Elizabeth (Libby) Narula">Elizabeth (Libby) Narula</option>
+                    <option value="Ace Narula">Ace Narula</option>
+                    <option value="Grace Narula">Grace Narula</option>
+                    <option value="Milan Narula">Milan Narula</option>
+                </select></td>
+                <br><br>
+
+
+
+
+                </tr>
+            </table>
+
+            <div class="section-container" id="extraNotesSection" name="extraNotesSection" style="width: 100%;"">
+                
+                <h4 id="worker1NotesHeading">Additional Notes for Worker 1: </h4>
+                <!-- <button type="button" class="btn" id="open-extra-notes-btn">Notes</button> -->
+
+                <div class="col s6" style="width: 50%;">
+                    <label for="extra-notes1"></label>
+                    <select id="extra-notes1" name="extra-notes1" class="browser-default">
+                       
+                        <option value="" disabled selected></option>
+                        <option value="I was unable to record everything due to also assisting Ace and Grace">I was
+                            unable to record everything due to also assisting Ace and Grace</option>
+                        <option value="I was unable to record everything due to also assisting Ace">I was unable to
+                            record everything due to also assisting Ace</option>
+                        <option value="I was unable to record everything due to also assisting Grace">I was unable
+                            to record everything due to also assisting Grace</option>
+                        <option value="I was unable to record everything due to also assisting Milan">I was unable
+                            to record everything due to also assisting Milan</option>
+                        <option value="I was unable to record everything due to also assisting Grace and Milan">I
+                            was unable to record everything due to also assisting Grace and Milan</option>
+                        <option value="I was unable to record everything due to also assisting Ace and Milan">I was
+                            unable to record everything due to also assisting Ace and Milan</option>
+                        <option value="I was unable to record everything due to also assisting Ace, Grace and Milan">I
+                            was unable to record everything due to also assisting Ace, Grace and Milan</option>
+                        <option value="James said he’s struggling when his kids are not with him">James said he’s
+                            struggling when his kids are not with him</option>
+                        <option
+                            value="James was visibly distressed that he couldn’t organise a support worker to pick up Grace from Libby's house due to Grace’s funding being linked to Ace and Libby this week">
+                            James was visibly distressed that he couldn’t organise a support worker to pick up Grace
+                            from Libby's house due to Grace’s funding being linked to Ace and Libby this week
+                        </option>
+                        <option
+                            value="Support Worker 1 helped Support Worker 2 with report due to language difficulties">
+                            Support Worker 1 helped Support Worker 2 with their note due to written language barriers
+                        </option>
+                        <option value="--">I provided supports in line with the care plans and NDIS requirements of
+                            ongoing
+                            assistance for physical, practical, insight supervision, prompting, standby, behaviours of
+                            concern,
+                            mental health, emotional regulation, and other disability needs.</option>
+                    </select>
+                    <h4>Changes to Notes</h4>
+                    <textarea value="editABCs" rows="10" col="20">Please add anything not covered here</textarea>
+                </div>
+               
+
+            </div>
+            <div class="section-container">
+                <h3 style="font-size: 28px;">
+                    Appointments
+                   
+                </h3>
+                <button type="button" class="btn" id="open-appointment-btn">Appointments</button>
+
+                <div id="appointment-section" class="appointment-section">
+                  
+                    <div class="appointment-form">
+                        <label for="appointment">Select Appointment Type:</label><br>
+                        <select id="appointment" name="appointment" class="browser-default">
+                            <option value="" disable-selected>--Please choose an option--</option>
+                            <option value="Occupational Therapy">Occupational Therapy</option>
+                            <option value="Physiotherapy">Physiotherapy</option>
+                            <option value="Podiatry">Podiatry</option>
+                            <option value="Psychology">Psychology</option>
+                            <option value="Hydrotherapy">Hydrotherapy</option>
+                            <option value="Behavioural Therapy">Behavioural Therapy</option>
+                            <option value="Continence Nurse">Continence Nurse</option>
+                            <option value="Counselling">Counselling</option>
+                            <option value="GP">GP</option>
+                            <option value="Social Worker">Social Worker</option>
+                            <option value="Speech Therapy">Speech Therapy</option>
+                            <option value="Pain Specialist">Pain Specialist</option>
+                            <option value="Psychiatrist">Psychiatrist</option>
+                            <option value="Dentist">Dentist</option>
+                            <option value="Hospital">Hospital</option>
+                            <option value="Stakeholder Meeting">Stakeholder Meeting</option>
+                            <option value="Cancelled Appointment">Cancelled Appointment</option>
+                            <option value="AAT">AAT</option>
+                            <option value="Other">----</option>
+                            <option value="None">None</option>
+                        </select><br><br>
+                        <button type="button" class="btn" id="add-appointment-btn">Add Appointment</button>
+                        <button type="button" class="btn close-btn" onclick="closeAppointment()">Close</button>
+
+                    </div>
+                </div>
+            </div>
+            <hr class="page-break">
+            <div>
+
+                <h3>Assisted With - Frequency </h3>
+            </div>
+
+
+            <div id="assisted-with-container">
+                <div class="row">
+
+                    <div class="col s12 input-field">
+
+
+                        <!-- <div class="col s4 input-field"> -->
+
+                        <table>
+                            <tr>
+                                <td> <label for="worker1assisted"></label>
+                                    <select id="worker1assisted" name="worker1assisted" class="browser-default">
+                                        <option value="">Worker's name</option><br>
+                                        <option value="Andrea Fajardo">Andrea Fajardo</option>
+                                        <option value="Angela Lee">Angela Lee</option>
+                                        <option value="Angela Zefi">Angela Zefi</option>
+                                        <option value="Anika Bartholomeusz">Anika Bartholomeusz</option>
+                                        <option value="Benjamin Roberts">Benjamin Roberts</option>
+                                        <option value="Bronte (Bunny) Pettman">Bronte (Bunny) Pettman</option>
+                                        <option value="Chaynne Humphrys">Chaynne Humphrys</option>
+                                        <option value="Chi Ha">Chi Ha</option>
+                                        <option value="Courtney Millington">Courtney Millington</option>
+                                        <option value="Dhara Patel">Dhara Patel</option>
+                                        <option value="Dhruv Sabharwal">Dhruv Sabharwal</option>
+                                        <option value="Fernando Arnibar">Fernando Arnibar</option>
+                                        <option value="Gaumit Patel">Gaumit Patel</option>
+                                        <option value="Harsh Modi">Harsh Modi</option>
+                                        <option value="Jarryd Humphrys">Jarryd Humphrys</option>
+                                        <option value="Joe Zhang">Joe Zhang</option>
+                                        <option value="Jose Diaz Armijo">Jose Diaz Armijo</option>
+                                        <option value="Julie Moore">Julie Moore</option>
+                                        <option value="Joseph Espejo">Joseph Espejo</option>
+                                        <option value="Kapil Lamichhane">Kapil Lamichhane</option>
+                                        <option value="Marie (Maz) Andersen">Marie (Maz) Andersen</option>
+                                        <option value="Meena Sapkota">Meena Sapkota</option>
+                                        <option value="Muhammad Hamza">Muhammad Hamza</option>
+                                        <option value="Otto Basson">Otto Basson</option>
+                                        <option value="Parvinder Kaur">Parvinder Kaur</option>
+                                        <option value="Pranvera Ymeraj">Pranvera Ymeraj</option>
+                                        <option value="Robandeep Singh">Robandeep Singh</option>
+                                        <option value="Rodrigo Tangol">Rodrigo Tangol</option>
+                                        <option value="Rosie Kaur">Rosie Kaur</option>
+                                        <option value="Margerite (Rita) Gjergji">Margerite (Rita) Gjergji</option>
+                                        <option value="Sandy Tran">Sandy Tran</option>
+                                        <option value="Victoria Horsfall">Victoria Horsfall</option>
+                                        <option value="Zachary (Zac) Gawen">Zachary (Zac) Gawen</option>
+                                    </select>
+                                </td>
+
+                                <td><select name="assistanceWith1" id="assistanceWith1" class="browser-default">
+                                        <option value="None">None</option>
+                                        <option value="Mobility - Hands on assistance">Mobility - Hands on assistance</option>
+  <option value="Mobility - Motivation">Mobility - Motivation</option>
+  <option value="Mobility - Stand by assistance">Mobility - Stand by assistance</option>
+  <option value="Mobility - Transfers">Mobility - Transfers</option>
+  <option value="Mobility - Insight supervision">Mobility - Insight supervision</option>
+  <option value="Self-care - Brushing hair">Self-care - Brushing hair</option>
+  <option value="Self-care - Brushing teeth">Self-care - Brushing teeth</option>
+  <option value="Self-care - Changing clothes">Self-care - Changing clothes</option>
+  <option value="Self-care - Picking out day clothes">Self-care - Picking out day clothes</option>
+  <option value="Self-care - Picking out night clothes">Self-care - Picking out night clothes</option>
+  <option value="Self-care - Shower">Self-care - Shower</option>
+  <option value="Self-care - Sponge bath">Self-care - Sponge bath</option>
+  <option value="Learning - Age-appropriate life skills">Learning - Age-appropriate life skills</option>
+  <option value="Learning -Life skills">Learning -Life skills</option>
+  <option value="Learning -Skill development">Learning -Skill development</option>
+  <option value="Learning -Feeling the urge to go to the toilet">Learning -Feeling the urge to go to the toilet</option>
+  <option value="Learning -Noticing body awareness before needing the toilet">Learning -Noticing body awareness before needing the toilet</option>
+  <option value="Learning -Tying shoe laces">Learning -Tying shoe laces</option>
+  <option value="Learning � To communicate nicely">Learning � To communicate nicely</option>
+  <option value="Self-management - Phone calls, emails, paperwork etc">Self-management - Phone calls, emails, paperwork etc</option>
+  <option value="Self-management - General tidy up">Self-management - General tidy up</option>
+  <option value="Self-management - Household tasks">Self-management - Household tasks</option>
+  <option value="Prompting word finding">Prompting word finding</option>
+  <option value="Using flash cards">Using flash cards</option>
+  <option value="Using Proloquo2Go">Using Proloquo2Go</option>
+  <option value="Coping statements">Coping statements</option>
+  <option value="Coping strategies">Coping strategies</option>
+  <option value="Emotional support">Emotional support</option>
+  <option value="Behaviours of concerns">Behaviours of concerns</option>
+  <option value="Social participation">Social participation</option>
+  <option value="Social skills">Social skills</option>
+  <option value="Community skills">Community skills</option>
+  <option value="Management of panic attacks">Management of panic attacks</option>
+  <option value="Meal preparation">Meal preparation</option>
+  <option value="Mental health">Mental health</option>
+  <option value="Mindfulness strategies">Mindfulness strategies</option>
+  <option value="Participant was feeling unwell">Participant was feeling unwell</option>
+  <option value="Recreational activities">Recreational activities</option>
+  <option value="Relaxation strategies">Relaxation strategies</option>
+  <option value="Standby assistance">Standby assistance</option>
+  <option value="Therapy exercises">Therapy exercises</option>
+                                </td>
+                                <td><label for="activities-other"></label>
+                                    <input type="text" id="activities-other" "></select></td>
+                                    
+                                            <td>
+
+
+                                                <select name=" numberoftimes" id="numberoftimes"
+                                        class="browser-default">
+
+                                    <option value="">--none--</option>
+                                    <option value="1">--1--</option>
+                                    <option value="2">--2--</option>
+                                    <option value="3">--3--</option>
+                                    <option value="4">--4--</option>
+                                    <option value="5">--5--</option>
+
+                                    <option value="6">--6--</option>
+                                    <option value="7">--7--</option>
+                                    <option value="8">-8--</option>
+                                    <option value="9">--9--</option>
+                                    <option value="10">--10--</option>
+                                    <option value="11">--11--</option>
+                                    <option value="12">--12--</option>
+                                    <option value="13">--13--</option>
+                                    <option value="14">--14--</option>
+                                    <option value="15">--15--</option>
+                                    <option value="16">--16--</option>
+                                    <option value="17">--17--</option>
+                                    <option value="18">--18--</option>
+                                    <option value="19">--19--</option>
+                                    <option value="20">--20--</option>
+                                    <option value="Most of Shift">--Most of Shift--</option>
+                                    <option value="All shift">--All shift--</option>
+
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+
+                        </select>
+
+
+                        <br><br>
+                        <button type="button" id="add-activity-btn" class="btn">Add Task</button>
+
+
+
+
+
+
+                    </div>
+
+                    <!--  -->
+
+                </div>
+            </div>
+            <div class="assisted-with-container">
+                <h3>Fatigue Log</h3>
+                <br><br>
+
+                <div class="row">
+
+                   
+
+                    <div class="col s4">
+                        <label for="fatigueBefore1-activity1">Fatigue Before (0-10):</label>
+                        <select id="fatigueBefore1-activity1" name="fatigueBefore1-activity1"
+                            class="browser-default">
+                            <option value="">--none--</option>
+                            <option value="1">--1--</option>
+                            <option value="2">--2--</option>
+                            <option value="3">--3--</option>
+                            <option value="4">--4--</option>
+                            <option value="5">--5--</option>
+                            <option value="6">--6--</option>
+                            <option value="7">--7--</option>
+                            <option value="8">--8--</option>
+                            <option value="9">--9--</option>
+                            <option value="10">--10--</option>
+                        </select>
+                        <span id="fatigueBeforeDisplay1-activity1">--</span>
+                        <input type="hidden" id="fatigueBeforeHidden1-activity1"
+                            name="fatigueBeforeHidden1-activity1">
+                    </div>
+
+
+                    <div class="col s4">
+                        <label for="activityFatigue1">Activity</label>
+                            <select id="activityFatigue1" name="activityFatigue1" class="browser-default">
+                                <option value="">--Select an option--</option>
+                            </select>
+                        
+                       
+
+                        </select> -->
+                        <button type="button" id="add-task-btn" class="btn">Add Activity</button>
+                    </div>
+
+
+                    <div class="col s4">
+                        <label for="fatigueAfter1-activity1">Fatigue After (0-10):</label>
+                        <select id="fatigueAfter1-activity1" name="fatigueAfter1-activity1" class="browser-default">
+                            <option value="">--none--</option>
+                            <option value="1">--1--</option>
+                            <option value="2">--2--</option>
+                            <option value="3">--3--</option>
+                            <option value="4">--4--</option>
+                            <option value="5">--5--</option>
+                            <option value="6">--6--</option>
+                            <option value="7">--7--</option>
+                            <option value="8">--8--</option>
+                            <option value="9">--9--</option>
+                            <option value="10">--10--</option>
+                        </select>
+                        <span id="fatigueAfterDisplay1-activity1">--</span>
+                        <input type="hidden" id="fatigueAfterHidden1-activity1"
+                            name="fatigueAfterHidden1-activity1">
+                    </div>
+                </div>
+               
+            </div> -->
+            <hr class="page-break">
+
+            <hr class="page-break">
+            <div class="section-container">
+                <h2>ABC Data: </h2>
+                <button type="button" id="open-incident-btn" class="btn">Add BOC</button>
+                <div id="incident-report" class="incident-section">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeIncidentReport()">&times;</span>
+                        <div>
+
+
+
+
+                            
+                            <fieldset class="uk-fieldset">
+
+
+
+
+
+
+
+
+                                <div>
+                                    <h4>Antecedent</h4>
+                                    <div class="input-field">
+                                        <select id="antecedent" name="antecedent" class="browser-default">
+                                            <option value="">--Select an option--</option>
+                                        </select>
+                                        <h4>Changes to Notes</h4>
+                                        <textarea value="editABCs" rows="10" col="20">Please add anything not covered here</textarea>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4>Behaviours</h4>
+                                    <div class="input-field">
+                                        <select id="behaviour" name="behaviour" class="browser-default">
+                                            <option value="">--Select an option--</option>
+                                        </select>
+                                        <h4>Changes to Notes</h4>
+                                        <textarea value="editABCs" rows="10" col="20">Please add anything not covered here</textarea>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4>Consequences</h4>
+                                    <div class="input-field">
+                                        <select id="consequence" name="consequence" class="browser-default">
+                                            <option value="">--Select an option--</option>
+                                        </select>
+                                        <h4>Changes to Notes</h4>
+                                        <textarea value="editABCs" rows="10" col="20">Please add anything not covered here</textarea>
+                                    </div>
+                                </div>
+                                <div>
+                                   
+                                   
+
+                                <fieldset>
+
+                                    <h4>Duration: For how long did the incident occur?</h4>
+
+                                    <div class="input-field">
+
+
+                                        <label for="incident-duration"></label>
+                                        <select id="incident-duration" name="incident-duration" class="browser-default"
+                                            required>
+                                            <option value="1 min">1 minute</option>
+                                            <option value="2 min">2 minutes</option>
+                                            <option value="5 min">5 minutes</option>
+                                            <option value="10 min">10 minutes</option>
+                                            <option value="15 min">15 minutes</option>
+                                            <option value="30 min">30 minutes</option>
+                                            <option value="60 minutes or longer">Longer than 1 hour</option>
+                                            <option value="all-shift">All shift</option>
+                                        </select>
+                                    </div>
+                            </fieldset>
+                            <fieldset>
+
+                                <h4>Environment: Where did the incident or behaviour take place?</h4>
+
+                                <div class="input-field">
+                                    <label for="it-happened-where"></label>
+                                    <select id="it-happened-where" name="it-happened-where" class="browser-default">
+
+                                        <option value="Glandore">Glandore</option>
+                                        <option value="Plympton Park">Plympton Park</option>
+                                        <option value="In the community">Community</option>
+                                        <option value="In support Worker's Vehicle">Support worker's vehicle</option>
+
+                                    </select>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+    </div>
+
+    </div>
+
+
+
+
+    <div class="section-container">
+
+        <div class="row">
+
+            <div class="signatureContainer col s3" id="signatureBox1">
+                <img id="signatureImg1" src="" alt="Signature 1" class="signatureImg">
+                <caption id="SWautograph1"></caption>
+
+            </div>
+            <div class="col s1"> </div>
+            <div class="signatureContainer2 col s3" id="signatureBox2">
+                <img id="signatureImg2" src="" alt="Signature 2" class="signatureImg">
+                <caption id="SWautograph"></caption>
+            </div>
+
+            <!-- Hidden fields for signature paths -->
+            <input type="hidden" id="signatureImg1" name="signatureImg1">
+            <input type="hidden" id="signatureImg2" name="signatureImg2">
+
+            <button type="submit">Submit</button>
+            <input type="file" id="jsonFileInput" accept=".json">
+<button type="button" onclick="saveFormData()">Save Form Data</button>
+
+        </div>
+
+    </div>
+
+
+    <button type="button" id="downloadPDF" class="btn no-save">Download PDF</button>
+    <button type="submit" class="btn no-save">Submit Note</button>
+    <hr class="page-break">
+
+    </form>
+    </div>
+    <script>
+        const workers = {
+            'Andrea Fajardo': 'images/Andrea_Fajardo.png',
+            'Angela Lee': 'images/Angela_Lee.png',
+            'Angela Zefi': 'images/Angela_Zefi.png',
+            'Anika Bartholomeusz': 'images/Anika_Bartholomeusz.png',
+            'Benjamin (Ben) Roberts': 'images/Benjamin (Ben) Roberts.png',
+            'Bronte (Bunny) Pettman': 'images/Bronte (Bunny) Pettman.png',
+            'Chaynne Humphrys': 'images/Chaynne_Humphrys.png',
+            'Chi Ha': 'images/Chi_Ha.png',
+            'Courtney Millington': 'images/Courtney_Millington.png',
+            'Dhara Patel': 'images/Dhara_Patel.png',
+            'Dhruv Sabharwal': 'images/Dhruv_Sabharwal.png',
+            'Fernando Arnibar': 'images/Fernando_Arnibar.png',
+            'Gaumit Patel': 'images/Gaumit_Patel.png',
+            'Harshkumar (Happy) Modi': 'images/Harshkumar (Happy) Modi.png',
+            'Japneet (Rosie) Kaur': 'images/Japneet (Rosie) Kaur.png',
+            'Jarryd Humphrys': 'images/Jarryd_Humphrys.png',
+            'Joe Zhang': 'images/Joe_Zhang.png',
+            'Jose Diaz Armijo': 'images/Jose_Diaz_Armijo.png',
+            'Joseph Espejo': 'images/Joseph_Espejo.png',
+            'Julie Moore': 'images/Julie_Moore.png',
+            'Kapil Lamichane': 'images/Kapil_Lamichane.png',
+            'Margerite (Rita) Gjergji': 'images/Margerite (Rita) Gjergji.png',
+            'Marie (Maz) Andersen': 'images/Marie (Maz) Andersen.png',
+            'Meena Sapkota': 'images/Meena_Sapkota.png',
+            'Muhammad Hamza': 'images/Muhammad_Hamza.png',
+            'Otto Basson': 'images/Otto_Basson.png',
+            'Parvinder Kaur': 'images/Parvinder_Kaur.png',
+            'Pranvera Ymeraj': 'images/Pranvera_Ymeraj.png',
+            'Robandeep (Roban) Singh': 'images/Robandeep (Roban) Singh.png',
+            'Rodrigo Tangol': 'images/Rodrigo_Tangol.png',
+            'Sandy Tran': 'images/Sandy_Tran.png',
+            'Victoria Horsfall': 'images/Victoria_Horsfall.png',
+            'Zachary (Zac) Gawen': 'images/Zachary (Zac) Gawen.png'
+        };
+    </script>
+    
+    <script>
+        document.getElementById('client').addEventListener('change', function() {
+            var client = this.value;
+            if (client) {
+                loadDropdowns(client);
+            } else {
+                clearDropdowns();
+            }
+        });
+    
+        document.getElementById('worker1').addEventListener('change', function() {
+            updateWorkerDropdowns();
+        });
+    
+        // document.getElementById('worker2').addEventListener('change', function() {
+        //     updateWorkerDropdowns();
+        // });
+    
+        function loadDropdowns(client) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', client.replace(/\s+/g, '_') + '.php', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = xhr.responseText;
+    
+                    var antecedentOptions = tempDiv.querySelector('#antecedentOptions');
+                    var behaviourOptions = tempDiv.querySelector('#behaviourOptions');
+                    var consequenceOptions = tempDiv.querySelector('#consequenceOptions');
+                    var activityFatigueOptions = tempDiv.querySelector('#activityFatigueOptions');
+    
+                    if (antecedentOptions && behaviourOptions && consequenceOptions && activityFatigueOptions) {
+                        document.getElementById('antecedent').innerHTML = antecedentOptions.innerHTML;
+                        document.getElementById('behaviour').innerHTML = behaviourOptions.innerHTML;
+                        document.getElementById('consequence').innerHTML = consequenceOptions.innerHTML;
+                        document.getElementById('activityFatigue1').innerHTML = activityFatigueOptions.innerHTML;
+                        // document.getElementById('activityFatigue2').innerHTML = activityFatigueOptions.innerHTML;
+                    } else {
+                        alert('Error loading options: Some elements are missing.');
+                    }
+                } else {
+                    alert('Error loading options.');
+                }
+            };
+            xhr.send();
+        }
+    
+        function clearDropdowns() {
+            document.getElementById('antecedent').innerHTML = '<option value="">--Select an option--</option>';
+            document.getElementById('behaviour').innerHTML = '<option value="">--Select an option--</option>';
+            document.getElementById('consequence').innerHTML = '<option value="">--Select an option--</option>';
+            document.getElementById('activityFatigue1').innerHTML = '<option value="">--Select an option--</option>';
+            document.getElementById('activityFatigue2').innerHTML = '<option value="">--Select an option--</option>';
+        }
+    
+        function updateWorkerDropdowns() {
+            var worker1 = document.getElementById('worker1').value;
+            var worker2 = document.getElementById('worker2').value;
+    
+            // Populate the worker task dropdowns with the selected worker names
+            document.getElementById('worker1assisted').innerHTML = `<option value="${worker1}">${worker1}</option>`;
+            // document.getElementById('worker2assisted').innerHTML = `<option value="${worker2}">${worker2}</option>`;
+            document.getElementById('worker1').innerHTML = `<option value="${worker1}">${worker1}</option>`;
+            // document.getElementById('worker2name').innerHTML = `<option value="${worker2}">${worker2}</option>`;
+    
+            // Disable the option of selecting the same worker for both Worker 1 and Worker 2
+            var worker2Options = document.getElementById('worker2').options;
+            for (var i = 0; i < worker2Options.length; i++) {
+                worker2Options[i].disabled = worker2Options[i].value === worker1;
+            }
+    
+            // Update the headings in the Assisted With section
+            document.getElementById('worker1NotesHeading').innerText = `Additional Notes for ${worker1}: `;
+            // document.getElementById('worker2NotesHeading').innerText = `Additional Notes for ${worker2}: `;
+    
+            // Update the signature images
+            document.getElementById('signatureImg1').src = workers[worker1] || '';
+            document.getElementById('signatureImg2').src = workers[worker2] || '';
+        }
+    
+        // Function to open the incident modal
+        document.getElementById('open-incident-btn').addEventListener('click', function() {
+            document.getElementById('incident-report').classList.add('active');
+        });
+    
+        // Function to close the incident modal
+        function closeIncidentReport() {
+            document.getElementById('incident-report').classList.remove('active');
+        }
+
+         // Appointment Modal Functionality
+        document.getElementById('open-appointment-btn').addEventListener('click', function() {
+            var appointmentSection = document.getElementById('appointment-section');
+            appointmentSection.classList.toggle('active');
+        });
+
+        function closeAppointment() {
+            var appointmentSection = document.getElementById('appointment-section');
+            appointmentSection.classList.remove('active');
+        }
+       
+       
+                    
+        
+    </script>
+  <script>
+    document.getElementById('jsonFileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const jsonData = JSON.parse(e.target.result);
+            sendJsonToServer(jsonData);
+        };
+        reader.readAsText(file);
+    });
+    
+    function sendJsonToServer(jsonData) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'process_json_file.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const responseData = JSON.parse(xhr.responseText);
+                populateForm(responseData);
+            }
+        };
+        xhr.send(JSON.stringify(jsonData));
+    }
+    
+    function populateForm(data) {
+        const form = document.getElementById('shiftForm');
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const element = form.elements[key];
+                if (element) {
+                    if (element.type === 'checkbox' || element.type === 'radio') {
+                        element.checked = data[key];
+                    } else if (element.type === 'select-one' || element.type === 'select-multiple') {
+                        for (let i = 0; i < element.options.length; i++) {
+                            if (element.options[i].value == data[key]) {
+                                element.selectedIndex = i;
+                                element.options[i].style.backgroundColor = 'yellow'; // Highlight option
+                                break;
+                            }
+                        }
+                    } else {
+                        element.value = data[key];
+                    }
+                }
+            }
+        }
+    }
+    </script>
+    
+    </body>
+    </html>
